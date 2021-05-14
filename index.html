@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>環保署環境資料 - 空氣品質指標（AQI）</title>
+    <title>環保署環境資料 - 全台空氣品質指標（AQI）</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="images/favicon.ico" rel="shortcut icon">
     <meta charset="UTF-8">
@@ -20,16 +20,19 @@
 
 </head>
 
-<body class="bg-lighter">
+<body>
+    <div class="bg">
+        <h1 class="px-3  text-center mb-5">環保署環境資料 - <span class="text-orange">全台空氣品質指標（AQI)</span></h1>
+
+    </div>
     <div class="container my-5">
         <div class="post">
             <!-- 練習開始 -->
-            <h1 class="mt-0 text-muted">環保署環境資料 - 空氣品質指標（AQI）</h1>
 
             <div class="alert alert-secondary">
                 <p>提示：</p>
                 <ol class="mb-0">
-                    <li>本站資料來源：<a href="https://opendata.epa.gov.tw/" target="_blank">行政院環境保護署</a> open data</li>
+                    <li>本站資料來源：<a href="https://data.epa.gov.tw/" target="_blank">行政院環境保護署</a> open data</li>
                     <li>使用Ajax 撈取 API ， Vue.js 元件呈現資料內容並製作城市過濾選項</li>
                     <li>將 Vue.js 元件內層資料透過 emit 傳遞到外層 (作為另一個關注城市的呈現)</li>
                     <li>依據不同污染呈現不同色彩</li>
@@ -39,7 +42,7 @@
 
             <div id="app">
                 <select name="" id="" class="form-control mb-3" v-model='filter'>
-                    <option value="">--- 請選擇城市 ---</option>
+                    <option value="所有城市" selected="selected">--- 請選擇城市 ---</option>
                     <option is="location-option" v-for="item in location" :city="item" :key="item"></option>
                 </select>
                 <div>
@@ -52,11 +55,15 @@
                 </div>
 
                 <hr>
+                <h4>{{filter}}</h4>
                 <div class="card-columns">
                     <location-card v-for='(item,key) in filterData' :item="item" :is-follow="false" :key="item.SiteId"
                         v-on:tostared="addToStared">
                     </location-card>
                 </div>
+                <a href="#" class="totop" @click.prevent="toTop">
+                    <i class="fas fa-angle-up" aria-hidden="true"></i>
+                </a>
             </div>
 
             <!-- 城市選項 -->
@@ -144,7 +151,7 @@
                         data: [],
                         location: [],
                         stared: [],
-                        filter: '',
+                        filter: '所有城市',
                     },
                     methods: {
                         //讀取暫存內的關注城市
@@ -195,12 +202,15 @@
                             let data = JSON.stringify(this.stared);
                             // console.log(data);
                             localStorage.setItem('AQIData', data);
+                        },
+                        toTop: function () {
+                            $('body,html').animate({ scrollTop: 0 }, 800);
                         }
                     },
                     computed: {
                         filterData: function () {
                             let vm = this;
-                            if (!this.filter) return vm.data;
+                            if (this.filter == "所有城市") return vm.data;
                             return vm.data.filter((item) => {
                                 return item.County == vm.filter;
                             })
@@ -246,6 +256,7 @@
 
         </div>
     </div>
+
 </body>
 
 </html>
